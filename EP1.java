@@ -91,8 +91,6 @@ class Matriz {
             this.m[i1][i] = this.m[i2][i];
             this.m[i2][i] = aux;
         }
-	
-		// TODO: implementar este metodo.
 	}
 
 	// metodo que multiplica as entradas da linha i pelo escalar k
@@ -102,7 +100,6 @@ class Matriz {
         while(j<this.col){
             this.m[i][j] = this.m[i][j] * k;
         }
-		// TODO: implementar este metodo.
 	}
 
 	// metodo que faz a seguinte combinacao de duas linhas da matriz:
@@ -111,8 +108,10 @@ class Matriz {
 	//
 
 	private void combinaLinhas(int i1, int i2, double k){
-
-		// TODO: implementar este metodo.
+        int i = 0;
+        while(i<this.col){
+            this.m[i1][i] += this.m[i2][i] * k;
+        }
 	}
 
 	// metodo que procura, a partir da linha ini, a linha com uma entrada nao nula que

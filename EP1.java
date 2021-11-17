@@ -84,6 +84,13 @@ class Matriz {
 	// metodo que troca as linhas i1 e i2 de lugar.
 
 	private void trocaLinha(int i1, int i2){
+        int i = 0;
+        double aux;
+        while(i<this.col){
+            aux = this.m[i1][i];
+            this.m[i1][i] = this.m[i2][i];
+            this.m[i2][i] = aux;
+        }
 	
 		// TODO: implementar este metodo.
 	}
@@ -91,7 +98,10 @@ class Matriz {
 	// metodo que multiplica as entradas da linha i pelo escalar k
 
 	private void multiplicaLinha(int i, double k){
-
+        int j = 0;
+        while(j<this.col){
+            this.m[i][j] = this.m[i][j] * k;
+        }
 		// TODO: implementar este metodo.
 	}
 

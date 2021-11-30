@@ -56,6 +56,19 @@ class Matriz {
 		}
 	}
 
+	public void imprimeDeterminante(){
+
+		for(int i = 0; i < lin; i++){
+			System.out.print("|");
+			for(int j = 0; j < col; j++){
+
+				System.out.printf("%7.2f ", m[i][j]);
+			}
+			System.out.print("|");
+			System.out.println();
+		}
+	}
+
 	// metodo que imprime a matriz expandida formada pela combinacao da matriz que 
 	// chama o metodo com a matriz "agregada" recebida como parametro. Ou seja, cada 
 	// linha da matriz impressa possui as entradas da linha correspondente da matriz 
@@ -87,9 +100,9 @@ class Matriz {
         int i = 0;
         double aux;
         while(i<this.col){
-            aux = this.m[i1][i];
-            this.m[i1][i] = this.m[i2][i];
-            this.m[i2][i] = aux;
+			aux = this.m[i1-1][i];
+			set(i1-1, i, this.m[i2-1][i]);
+			set(i2-1, i, aux);
         }
 	}
 
@@ -98,7 +111,8 @@ class Matriz {
 	private void multiplicaLinha(int i, double k){
         int j = 0;
         while(j<this.col){
-            this.m[i][j] = this.m[i][j] * k;
+			set(i, j, (get(i, j)*k));
+            j++;
         }
 	}
 
@@ -110,7 +124,8 @@ class Matriz {
 	private void combinaLinhas(int i1, int i2, double k){
         int i = 0;
         while(i<this.col){
-            this.m[i1][i] += this.m[i2][i] * k;
+            set(i1-1, i, (get(i1-1, i)+get(i2-1, i)*k));
+			i++;
         }
 	}
 
@@ -143,15 +158,35 @@ class Matriz {
 		return new int [] { pivo_lin, pivo_col };
 	}
 
+
+
+	public void etapa_eliminacao(){
+		int[] pivo;
+		double mL = 0.0;
+		for(int i = 0; i<this.col; i++) {
+			pivo = encontraLinhaPivo(i); //akk
+			for (int j = 0; j < this.col; j++) {
+				//espero que esteja pegando as colunas 1 j para i = 1
+				mL = get(j, i) / get(pivo[0], pivo[1]);
+				combinaLinhas(j, i, -mL); // acho que tem q ter um menos pq na funcao combinaLinhas usa + no produto
+			}
+		}
+	}
+
 	// metodo que implementa a eliminacao gaussiana, que coloca a matriz (que chama o metodo)
-	// na forma escalonada. As operacoes realizadas para colocar a matriz na forma escalonada 
-	// tambem devem ser aplicadas na matriz "agregada" caso esta seja nao nula. Este metodo 
-	// tambem deve calcular e devolver o determinante da matriz que invoca o metodo. Assumimos 
+	// na forma escalonada. As operacoes realizadas para colocar a matriz na forma escalonada
+	// tambem devem ser aplicadas na matriz "agregada" caso esta seja nao nula. Este metodo
+	// tambem deve calcular e devolver o determinante da matriz que invoca o metodo. Assumimos
 	// que a matriz que invoca este metodo eh uma matriz quadrada.
 
 	public double formaEscalonada(Matriz agregada){
+		// fase de eliminacao:
+		// M x v (matriz aumentada)
+		// determinar pivo akk
+		//definir multiplicadores da linha mik = aik/akk
+		// atualizar as linhas Li = Li - mik x Lpivo
 
-		// TODO: implementar este metodo.
+		etapa_eliminacao();
 
 		return 0.0;
 	}
@@ -181,6 +216,14 @@ public class EP1 {
 		int n = in.nextInt();			// le a dimensão da matriz a ser manipulada pela operacao escolhida.
 
 		// TODO: completar este metodo.
+		Matriz m = new Matriz(n, n);
+
+		for(int i = 0; i < n; i++){
+			for(int j = 0; j < n; j++){
+				n = in.nextInt();
+				m.set(i, j, n);
+			}
+		}
 
 		if("resolve".equals(operacao)){
 
@@ -189,7 +232,8 @@ public class EP1 {
 
 		}
 		else if("determinante".equals(operacao)){
-
+			System.out.println("determinante:");
+			m.imprimeDeterminante();
 		}
 		else {
 			System.out.println("Operação desconhecida!");

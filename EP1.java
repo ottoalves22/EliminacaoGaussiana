@@ -186,7 +186,7 @@ class Matriz {
 		//definir multiplicadores da linha mik = aik/akk
 		// atualizar as linhas Li = Li - mik x Lpivo
 
-		etapa_eliminacao();
+		etapa_eliminacao(); // falta fazer com a porra da MAtriz Agregada (sera q ela é o b do [A | b]?)
 
 		return 0.0;
 	}

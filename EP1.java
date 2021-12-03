@@ -124,7 +124,7 @@ class Matriz {
 	private void combinaLinhas(int i1, int i2, double k){
         int i = 0;
         while(i<this.col){
-            set(i1-1, i, (get(i1-1, i)+get(i2-1, i)*k));
+            set(i1, i, (get(i1, i)+get(i2, i)*k));
 			i++;
         }
 	}
@@ -159,20 +159,6 @@ class Matriz {
 	}
 
 
-
-	public void etapa_eliminacao(){
-		int[] pivo;
-		double mL = 0.0;
-		for(int i = 0; i<this.col; i++) {
-			pivo = encontraLinhaPivo(i); //akk
-			for (int j = 0; j < this.col; j++) {
-				//espero que esteja pegando as colunas 1 j para i = 1
-				mL = get(j, i) / get(pivo[0], pivo[1]);
-				combinaLinhas(j, i, -mL); // acho que tem q ter um menos pq na funcao combinaLinhas usa + no produto
-			}
-		}
-	}
-
 	// metodo que implementa a eliminacao gaussiana, que coloca a matriz (que chama o metodo)
 	// na forma escalonada. As operacoes realizadas para colocar a matriz na forma escalonada
 	// tambem devem ser aplicadas na matriz "agregada" caso esta seja nao nula. Este metodo
@@ -180,16 +166,45 @@ class Matriz {
 	// que a matriz que invoca este metodo eh uma matriz quadrada.
 
 	public double formaEscalonada(Matriz agregada){
-		// fase de eliminacao:
-		// M x v (matriz aumentada)
-		// determinar pivo akk
-		//definir multiplicadores da linha mik = aik/akk
-		// atualizar as linhas Li = Li - mik x Lpivo
+			int[] pivo;
+			int[] pivoA;
+			double mL = 0.0;
+			double mL2 = 0.0;
+			for(int i = 0; i<this.col; i++) {
+				pivo = encontraLinhaPivo(i); //akk
+				pivoA = agregada.encontraLinhaPivo(i);
+				/** swap row in A matrix **/
 
-		etapa_eliminacao(); // falta fazer com a porra da MAtriz Agregada (sera q ela é o b do [A | b]?)
+				for (int j = 0; j < this.col; j++) {
+					//espero que esteja pegando as colunas 1 j para i = 1
+					//System.out.println(get(j, i)); // AQUI TA PEGANDO x/ZERO
+					if(pivo[1] != 0 && pivo[0] != 0){
+						System.out.println(get(pivo[1], pivo[0]));
+						mL = get(j, i) / get(i, i);
+						mL2 = agregada.get(j, i) / agregada.get(i, i);
+						combinaLinhas(j, i, -mL); // acho que tem q ter um menos pq na funcao combinaLinhas usa + no produto
+						agregada.combinaLinhas(j, i, -mL2);
+					}
 
+				}
+			}
+
+		//determinante:
+		double resultado = 1.0;
+		for(int i=0; i<this.col; i++){
+			for(int j=0; j<this.col; j++){
+				if(i==j){
+					resultado *= this.m[i][j];
+					//System.out.println(this.m[i][i]);
+				}
+			}
+		}
 		return 0.0;
 	}
+
+
+	// fase de eliminacao:
+		//etapa_eliminacao(agregada); // falta fazer com a porra da MAtriz Agregada (sera q ela é o b do [A | b]?)
 
 	// metodo que implementa a eliminacao de Gauss-Jordan, que coloca a matriz (que chama o metodo)
 	// na forma escalonada reduzida. As operacoes realizadas para colocar a matriz na forma escalonada 
@@ -220,10 +235,13 @@ public class EP1 {
 
 		for(int i = 0; i < n; i++){
 			for(int j = 0; j < n; j++){
-				n = in.nextInt();
-				m.set(i, j, n);
+				m.set(i, j, in.nextInt());
 			}
 		}
+
+		Matriz aux = m;
+		m.formaEscalonada(aux);
+		m.imprime();
 
 		if("resolve".equals(operacao)){
 

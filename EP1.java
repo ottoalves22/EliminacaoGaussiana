@@ -165,7 +165,7 @@ class Matriz {
 	// tambem deve calcular e devolver o determinante da matriz que invoca o metodo. Assumimos
 	// que a matriz que invoca este metodo eh uma matriz quadrada.
 
-	public double formaEscalonada(Matriz ma, Matriz ag){
+	public double[] formaEscalonada(Matriz ma, Matriz ag){
 
 		double[][] m = ma.m;
 		double[][] agregada = ag.m;
@@ -198,7 +198,7 @@ class Matriz {
 			}
 		}
 
-		//determinante
+		//vetor de solucoes
 		double[] x = new double[n];
 		for (int i = n - 1; i >= 0; i--) {
 			double sum = 0.0;

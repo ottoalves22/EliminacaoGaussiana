@@ -165,43 +165,51 @@ class Matriz {
 	// tambem deve calcular e devolver o determinante da matriz que invoca o metodo. Assumimos
 	// que a matriz que invoca este metodo eh uma matriz quadrada.
 
-	public double formaEscalonada(Matriz agregada){
-			int[] pivo;
-			int[] pivoA;
-			double mL = 0.0;
-			double mL2 = 0.0;
-			for(int i = 0; i<this.col; i++) {
-				pivo = encontraLinhaPivo(i); //akk
-				pivoA = agregada.encontraLinhaPivo(i);
-				/** swap row in A matrix **/
+	public double formaEscalonada(Matriz ma, Matriz ag){
 
-				for (int j = 0; j < this.col; j++) {
-					//espero que esteja pegando as colunas 1 j para i = 1
-					//System.out.println(get(j, i)); // AQUI TA PEGANDO x/ZERO
-					if(pivo[1] != 0 && pivo[0] != 0){
-						System.out.println(get(pivo[1], pivo[0]));
-						mL = get(j, i) / get(i, i);
-						mL2 = agregada.get(j, i) / agregada.get(i, i);
-						combinaLinhas(j, i, -mL); // acho que tem q ter um menos pq na funcao combinaLinhas usa + no produto
-						agregada.combinaLinhas(j, i, -mL2);
-					}
+		double[][] m = ma.m;
+		double[][] agregada = ag.m;
 
+		int n = agregada.length;
+
+		for(int i=0; i<n; i++){
+			int maximo = i;
+
+			for(int j=i+1; j<n; j++){
+				if(m[j][i] > m[maximo][i]){
+					maximo = j;
 				}
 			}
 
-		//determinante:
-		double resultado = 1.0;
-		for(int i=0; i<this.col; i++){
-			for(int j=0; j<this.col; j++){
-				if(i==j){
-					resultado *= this.m[i][j];
-					//System.out.println(this.m[i][i]);
+			double[] temp = m[i];
+			m[i] = m[maximo];
+			m[maximo] = temp;
+
+			double temp2 = agregada[i][0]; // acho que ta pegando da coluna correta
+			agregada[i][0] = agregada[maximo][0];
+			agregada[maximo][0] = temp2;
+
+			for(int j=i+1; j<n ; j++){
+				double mL = m[j][i]/m[i][i];
+				agregada[j][0] = mL * agregada[i][0];
+				for(int k=0; k<n; k++){
+					m[j][k] -= mL * m[i][k];
 				}
 			}
 		}
-		return 0.0;
-	}
 
+		//determinante
+		double[] x = new double[n];
+		for (int i = n - 1; i >= 0; i--) {
+			double sum = 0.0;
+			for (int j = i + 1; j < n; j++) {
+				sum += m[i][j] * x[j];
+			}
+			x[i] = (agregada[i][0] - sum) / m[i][i];
+		}
+
+		return x; // ARRANJO COM VALORES DE X E Y
+	}
 
 	// fase de eliminacao:
 		//etapa_eliminacao(agregada); // falta fazer com a porra da MAtriz Agregada (sera q ela é o b do [A | b]?)
@@ -232,18 +240,39 @@ public class EP1 {
 
 		// TODO: completar este metodo.
 		Matriz m = new Matriz(n, n);
+		Matriz aux = new Matriz(n,1);
 
 		for(int i = 0; i < n; i++){
 			for(int j = 0; j < n; j++){
-				m.set(i, j, in.nextInt());
+				int nTemp = in.nextInt();
+				m.set(i, j, nTemp);
 			}
 		}
 
-		Matriz aux = m;
-		m.formaEscalonada(aux);
-		m.imprime();
+		for(int i = 0; i < n; i++){
+			for(int j = 0; j < 1; j++){
+				int nTemp = in.nextInt();
+				aux.set(i, j, nTemp);
+			}
+		}
+		/*
+		for(int i = 0; i < n; i++){
+			for(int j = 0; j <= n; j++){
+				if (j < n) {
+					m.set(i, j, in.nextInt());
+				} else {
+					int nTemp = in.nextInt();
+					aux.set(1, n-j, nTemp);
+				}
+			}
+		}*/
+
+
+
+
 
 		if("resolve".equals(operacao)){
+
 
 		}
 		else if("inverte".equals(operacao)){
@@ -251,7 +280,8 @@ public class EP1 {
 		}
 		else if("determinante".equals(operacao)){
 			System.out.println("determinante:");
-			m.imprimeDeterminante();
+			m.formaEscalonada(m, aux);
+			m.imprime();
 		}
 		else {
 			System.out.println("Operação desconhecida!");

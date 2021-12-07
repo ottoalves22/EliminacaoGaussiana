@@ -198,8 +198,13 @@ class Matriz {
 			}
 		}
 
-		//vetor de solucoes
+		double determinante = determinante(m);
+
+		System.out.println(determinante);
+
 		double[] x = new double[n];
+		//vetor de solucoes
+
 		for (int i = n - 1; i >= 0; i--) {
 			double sum = 0.0;
 			for (int j = i + 1; j < n; j++) {
@@ -210,6 +215,54 @@ class Matriz {
 
 		return x; // ARRANJO COM VALORES DE X E Y
 	}
+
+
+	public double determinante(double[][] matrix)
+	{
+		int order = matrix.length;
+		double [][] m = new double[order-1][order-1];
+		double sum = 0;
+		int i,j,k;
+		/*
+		for (int row = 0; row < matrix.length; row++)
+		{
+			for (int column = 0; column < matrix[row].length; column++)
+			{
+				System.out.print(matrix[row][column] + " ");
+			}
+			System.out.println();
+		}
+		*/
+
+		if(order==1){
+			sum=matrix[0][0];
+		}
+
+		else{
+			//create minor matrix
+			for(int x=0; x < order; x++){
+				int y = 0;
+				k=0;
+				for(i=1; i < order; i++){
+					for (j=0; j <order; j++){
+						if (j == x)
+						{
+							continue;
+						}
+						m[y][k]= matrix[i][j];
+						k++;
+						if(k == order-1){
+							y++;
+							k=0;
+						}
+					}
+				}
+				sum = sum + matrix[0][x] * Math.pow((-1),x) * determinante(m);
+			}
+		}
+		return sum;
+	}
+
 
 	// fase de eliminacao:
 		//etapa_eliminacao(agregada); // falta fazer com a porra da MAtriz Agregada (sera q ela é o b do [A | b]?)
@@ -281,7 +334,7 @@ public class EP1 {
 		else if("determinante".equals(operacao)){
 			System.out.println("determinante:");
 			m.formaEscalonada(m, aux);
-			m.imprime();
+			//m.imprime();
 		}
 		else {
 			System.out.println("Operação desconhecida!");

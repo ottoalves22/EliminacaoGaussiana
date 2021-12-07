@@ -166,15 +166,16 @@ class Matriz {
 	// que a matriz que invoca este metodo eh uma matriz quadrada.
 
 	public double formaEscalonada(Matriz agregada){
-
+		//TODO FAZER VALIDACOES DESSA PARTE
 		double[][] m = this.m;
-		double[] agregada_aux = new double[this.lin];
-
-		for(int i=0; i< this.lin-1; i++){
-			agregada_aux[i] = m[i][this.col-1];
-		}
+		double[] agregada_aux = new double[this.lin];;
 
 		int n = agregada_aux.length;
+
+		for(int i=0; i<n; i++){
+			agregada_aux[i] = m[i][n];
+		}
+
 
 		for(int i=0; i<n; i++){
 			int maximo = i;
@@ -195,7 +196,7 @@ class Matriz {
 
 			for(int j=i+1; j<n ; j++){
 				double mL = m[j][i]/m[i][i];
-				agregada_aux[j] = mL * agregada_aux[i];
+				agregada_aux[j] -= mL * agregada_aux[i];
 				for(int k=0; k<n; k++){
 					m[j][k] -= mL * m[i][k];
 				}
@@ -209,9 +210,19 @@ class Matriz {
 			for (int j = i + 1; j < n; j++) {
 				sum += m[i][j] * x[j];
 			}
-			System.out.println(sum);
 			x[i] = (agregada_aux[i] - sum) / m[i][i];
 		}
+
+		for(int i=0; i<n; i++){
+			System.out.println(x[i]);
+		}
+
+		this.m = m;
+
+		for(int i=0; i<n; i++){
+			agregada.m[i][n] = agregada_aux[i];
+		}
+
 
 		double resultado = determinante(this);
 
@@ -276,15 +287,6 @@ public class EP1 {
 		String operacao = in.next();		// le, usando o scanner, a string que determina qual operacao deve ser realizada.
 		int n = in.nextInt();			// le a dimensão da matriz a ser manipulada pela operacao escolhida.
 
-		Matriz m = new Matriz(n, n+1);
-
-		for(int i = 0; i < n; i++){
-			for(int j = 0; j < n; j++){
-				int nTemp = in.nextInt();
-				m.set(i, j, nTemp);
-			}
-		}
-
 		if("resolve".equals(operacao)){
 			Matriz m1 = new Matriz(n, n+1);
 
@@ -295,13 +297,29 @@ public class EP1 {
 				}
 			}
 
-			//m.imprime();
 			double resultado = m1.formaEscalonada(m1); //TODO ARRUMA ESSA PORRA
 		}
 		else if("inverte".equals(operacao)){
+			Matriz m = new Matriz(n, n);
 
+			for(int i = 0; i < n; i++){
+				for(int j = 0; j < n; j++){
+					int nTemp = in.nextInt();
+					m.set(i, j, nTemp);
+				}
+			}
+
+			m.imprime();
 		}
 		else if("determinante".equals(operacao)){
+			Matriz m = new Matriz(n, n);
+
+			for(int i = 0; i < n; i++){
+				for(int j = 0; j < n; j++){
+					int nTemp = in.nextInt();
+					m.set(i, j, nTemp);
+				}
+			}
 			System.out.println("determinante:");
 			double resultado = m.determinante(m);
 			System.out.println(resultado);

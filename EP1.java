@@ -165,10 +165,15 @@ class Matriz {
 	// tambem deve calcular e devolver o determinante da matriz que invoca o metodo. Assumimos
 	// que a matriz que invoca este metodo eh uma matriz quadrada.
 
-	public double[] formaEscalonada(Matriz ma, Matriz ag){
+	public double formaEscalonada(Matriz ma){
 
 		double[][] m = ma.m;
-		double[][] agregada = ag.m;
+		System.out.println(ma.col-1);
+		double[] agregada = new double[ma.lin];
+
+		for(int i=0; i< ma.lin-1; i++){
+			agregada[i] = m[i][ma.col-1];
+		}
 
 		int n = agregada.length;
 
@@ -185,54 +190,43 @@ class Matriz {
 			m[i] = m[maximo];
 			m[maximo] = temp;
 
-			double temp2 = agregada[i][0]; // acho que ta pegando da coluna correta
-			agregada[i][0] = agregada[maximo][0];
-			agregada[maximo][0] = temp2;
+			double temp2 = agregada[i]; // acho que ta pegando da coluna correta
+			agregada[i] = agregada[maximo];
+			agregada[maximo] = temp2;
 
 			for(int j=i+1; j<n ; j++){
 				double mL = m[j][i]/m[i][i];
-				agregada[j][0] = mL * agregada[i][0];
+				agregada[j] = mL * agregada[i];
 				for(int k=0; k<n; k++){
 					m[j][k] -= mL * m[i][k];
 				}
 			}
 		}
 
-		double determinante = determinante(m);
-
-		System.out.println(determinante);
-
-		double[] x = new double[n];
 		//vetor de solucoes
-
+		double[] x = new double[n];
 		for (int i = n - 1; i >= 0; i--) {
 			double sum = 0.0;
 			for (int j = i + 1; j < n; j++) {
 				sum += m[i][j] * x[j];
 			}
-			x[i] = (agregada[i][0] - sum) / m[i][i];
+			x[i] = (agregada[i] - sum) / m[i][i];
+			System.out.println(x[i]);
 		}
 
-		return x; // ARRANJO COM VALORES DE X E Y
+		double resultado = determinante(ma);
+
+		return resultado; // ARRANJO COM VALORES DE X E Y
 	}
 
 
-	public double determinante(double[][] matrix)
-	{
+	public double determinante(Matriz ma){
+		Matriz aux_m = ma;
+		double[][] matrix = aux_m.m;
 		int order = matrix.length;
 		double [][] m = new double[order-1][order-1];
 		double sum = 0;
 		int i,j,k;
-		/*
-		for (int row = 0; row < matrix.length; row++)
-		{
-			for (int column = 0; column < matrix[row].length; column++)
-			{
-				System.out.print(matrix[row][column] + " ");
-			}
-			System.out.println();
-		}
-		*/
 
 		if(order==1){
 			sum=matrix[0][0];
@@ -257,21 +251,13 @@ class Matriz {
 						}
 					}
 				}
-				sum = sum + matrix[0][x] * Math.pow((-1),x) * determinante(m);
+				aux_m.m = m;
+				sum = sum + matrix[0][x] * Math.pow((-1),x) * determinante(aux_m);
 			}
 		}
 		return sum;
 	}
 
-
-	// fase de eliminacao:
-		//etapa_eliminacao(agregada); // falta fazer com a porra da MAtriz Agregada (sera q ela é o b do [A | b]?)
-
-	// metodo que implementa a eliminacao de Gauss-Jordan, que coloca a matriz (que chama o metodo)
-	// na forma escalonada reduzida. As operacoes realizadas para colocar a matriz na forma escalonada 
-	// reduzida tambem devem ser aplicadas na matriz "agregada" caso esta seja nao nula. Assumimos que
-	// a matriz que invoca esta metodo eh uma matriz quadrada. Não se pode assumir, contudo, que esta
-	// matriz ja esteja na forma escalonada (mas voce pode usar o metodo acima para isso).
 
 	public void formaEscalonadaReduzida(Matriz agregada){
 
@@ -291,50 +277,28 @@ public class EP1 {
 		String operacao = in.next();		// le, usando o scanner, a string que determina qual operacao deve ser realizada.
 		int n = in.nextInt();			// le a dimensão da matriz a ser manipulada pela operacao escolhida.
 
-		// TODO: completar este metodo.
-		Matriz m = new Matriz(n, n);
-		Matriz aux = new Matriz(n,1);
-
-		for(int i = 0; i < n; i++){
-			for(int j = 0; j < n; j++){
-				int nTemp = in.nextInt();
-				m.set(i, j, nTemp);
-			}
-		}
-
-		for(int i = 0; i < n; i++){
-			for(int j = 0; j < 1; j++){
-				int nTemp = in.nextInt();
-				aux.set(i, j, nTemp);
-			}
-		}
-		/*
-		for(int i = 0; i < n; i++){
-			for(int j = 0; j <= n; j++){
-				if (j < n) {
-					m.set(i, j, in.nextInt());
-				} else {
-					int nTemp = in.nextInt();
-					aux.set(1, n-j, nTemp);
-				}
-			}
-		}*/
-
-
-
 
 
 		if("resolve".equals(operacao)){
+			Matriz m = new Matriz(n, n+1);
 
+			for(int i = 0; i < n; i++){
+				for(int j = 0; j < n+1; j++){
+					int nTemp = in.nextInt();
+					m.set(i, j, nTemp);
+				}
+			}
 
+			//m.imprime();
+			double resultado = m.formaEscalonada(m);
 		}
 		else if("inverte".equals(operacao)){
 
 		}
 		else if("determinante".equals(operacao)){
 			System.out.println("determinante:");
-			m.formaEscalonada(m, aux);
-			//m.imprime();
+			//double resultado = m.determinante(m);
+			//System.out.println(resultado);
 		}
 		else {
 			System.out.println("Operação desconhecida!");

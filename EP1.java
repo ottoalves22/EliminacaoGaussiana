@@ -165,17 +165,16 @@ class Matriz {
 	// tambem deve calcular e devolver o determinante da matriz que invoca o metodo. Assumimos
 	// que a matriz que invoca este metodo eh uma matriz quadrada.
 
-	public double formaEscalonada(Matriz ma){
+	public double formaEscalonada(Matriz agregada){
 
-		double[][] m = ma.m;
-		System.out.println(ma.col-1);
-		double[] agregada = new double[ma.lin];
+		double[][] m = this.m;
+		double[] agregada_aux = new double[this.lin];
 
-		for(int i=0; i< ma.lin-1; i++){
-			agregada[i] = m[i][ma.col-1];
+		for(int i=0; i< this.lin-1; i++){
+			agregada_aux[i] = m[i][this.col-1];
 		}
 
-		int n = agregada.length;
+		int n = agregada_aux.length;
 
 		for(int i=0; i<n; i++){
 			int maximo = i;
@@ -190,13 +189,13 @@ class Matriz {
 			m[i] = m[maximo];
 			m[maximo] = temp;
 
-			double temp2 = agregada[i]; // acho que ta pegando da coluna correta
-			agregada[i] = agregada[maximo];
-			agregada[maximo] = temp2;
+			double temp2 = agregada_aux[i]; // acho que ta pegando da coluna correta
+			agregada_aux[i] = agregada_aux[maximo];
+			agregada_aux[maximo] = temp2;
 
 			for(int j=i+1; j<n ; j++){
 				double mL = m[j][i]/m[i][i];
-				agregada[j] = mL * agregada[i];
+				agregada_aux[j] = mL * agregada_aux[i];
 				for(int k=0; k<n; k++){
 					m[j][k] -= mL * m[i][k];
 				}
@@ -210,13 +209,13 @@ class Matriz {
 			for (int j = i + 1; j < n; j++) {
 				sum += m[i][j] * x[j];
 			}
-			x[i] = (agregada[i] - sum) / m[i][i];
-			System.out.println(x[i]);
+			System.out.println(sum);
+			x[i] = (agregada_aux[i] - sum) / m[i][i];
 		}
 
-		double resultado = determinante(ma);
+		double resultado = determinante(this);
 
-		return resultado; // ARRANJO COM VALORES DE X E Y
+		return resultado;
 	}
 
 
@@ -277,28 +276,35 @@ public class EP1 {
 		String operacao = in.next();		// le, usando o scanner, a string que determina qual operacao deve ser realizada.
 		int n = in.nextInt();			// le a dimensão da matriz a ser manipulada pela operacao escolhida.
 
+		Matriz m = new Matriz(n, n+1);
 
+		for(int i = 0; i < n; i++){
+			for(int j = 0; j < n; j++){
+				int nTemp = in.nextInt();
+				m.set(i, j, nTemp);
+			}
+		}
 
 		if("resolve".equals(operacao)){
-			Matriz m = new Matriz(n, n+1);
+			Matriz m1 = new Matriz(n, n+1);
 
 			for(int i = 0; i < n; i++){
 				for(int j = 0; j < n+1; j++){
 					int nTemp = in.nextInt();
-					m.set(i, j, nTemp);
+					m1.set(i, j, nTemp);
 				}
 			}
 
 			//m.imprime();
-			double resultado = m.formaEscalonada(m);
+			double resultado = m1.formaEscalonada(m1); //TODO ARRUMA ESSA PORRA
 		}
 		else if("inverte".equals(operacao)){
 
 		}
 		else if("determinante".equals(operacao)){
 			System.out.println("determinante:");
-			//double resultado = m.determinante(m);
-			//System.out.println(resultado);
+			double resultado = m.determinante(m);
+			System.out.println(resultado);
 		}
 		else {
 			System.out.println("Operação desconhecida!");

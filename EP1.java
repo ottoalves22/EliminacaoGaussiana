@@ -165,6 +165,9 @@ class Matriz {
 	// tambem deve calcular e devolver o determinante da matriz que invoca o metodo. Assumimos
 	// que a matriz que invoca este metodo eh uma matriz quadrada.
 
+
+
+
 	public double formaEscalonada(Matriz agregada){
 		//m e a matriz e agregada_aux e o vetor de resultados de m
 		double[][] m = this.m;
@@ -224,8 +227,9 @@ class Matriz {
 		//atribui as arranjos nas Matriz
 		this.m = m;
 		for(i=0; i<n; i++){
-			agregada.m[i][n] = agregada_aux[i];
+			agregada.m[i][0] = agregada_aux[i];
 		}
+
 		return determinante(this);
 	}
 
@@ -266,7 +270,6 @@ class Matriz {
 
 	public void formaEscalonadaReduzida(Matriz agregada){
 
-		// TODO: implementar este metodo.		
 	}
 }
 
@@ -292,10 +295,12 @@ public class EP1 {
 				}
 			}
 
-			double resultado = m1.formaEscalonada(m1); //TODO ARRUMA ESSA PORRA
+
+			double resultado = m1.formaEscalonada(agregada); //TODO ARRUMA ESSA PORRA
 		}
 		else if("inverte".equals(operacao)){
 			Matriz m = new Matriz(n, n);
+			Matriz agregada = new Matriz(n, 1);
 
 			for(int i = 0; i < n; i++){
 				for(int j = 0; j < n; j++){

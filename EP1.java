@@ -97,13 +97,10 @@ class Matriz {
 	// metodo que troca as linhas i1 e i2 de lugar.
 
 	private void trocaLinha(int i1, int i2){
-        int i = 0;
-        double aux;
-        while(i<this.col){
-			aux = this.m[i1-1][i];
-			set(i1-1, i, this.m[i2-1][i]);
-			set(i2-1, i, aux);
-        }
+		//fazendo substituicoes
+		double[] temp = m[i1];
+		m[i1] = m[i2];
+		m[i2] = temp;
 	}
 
 	// metodo que multiplica as entradas da linha i pelo escalar k
@@ -170,40 +167,33 @@ class Matriz {
 
 	public double formaEscalonada(Matriz agregada){
 		//m e a matriz e agregada_aux e o vetor de resultados de m
-		double[][] m = this.m;
+
 		double[] agregada_aux = new double[this.lin];
 
-		int n = agregada_aux.length;
+		int n = agregada.m.length;
+
 		for(int i=0; i<n; i++){
-			agregada_aux[i] = m[i][n];
+			agregada_aux[i] = this.m[i][n];
 		}
 
 		int i=0;
 		while(i<n){
 			//pivotando
-			int maximo = i;
-			for(int j=i+1; j<n; j++){
-				if(m[j][i] > m[maximo][i]){
-					maximo = j;
-				}
-			}
-
-			//fazendo substituicoes
-			double[] temp = m[i];
-			m[i] = m[maximo];
-			m[maximo] = temp;
+			int maximo = this.encontraLinhaPivo(i)[0];
+			this.trocaLinha(i, maximo);
+			//troca de linha no vetor resposta
 			double temp2 = agregada_aux[i]; // ta pegando da coluna correta?
 			agregada_aux[i] = agregada_aux[maximo];
 			agregada_aux[maximo] = temp2;
 
 			//faz a eliminacao
 			for(int j=i+1; j<n ; j++){
-				double mL = m[j][i]/m[i][i];
+				double mL = this.m[j][i]/this.m[i][i];
 				if(agregada_aux!=null){
 					agregada_aux[j] -= mL * agregada_aux[i];
 				}
 				for(int k=0; k<n; k++){
-					m[j][k] -= mL * m[i][k];
+					this.m[j][k] -= mL * this.m[i][k];
 				}
 			}
 			i++;
@@ -214,9 +204,9 @@ class Matriz {
 		for (int z = n - 1; z >= 0; z--) {
 			double sum = 0.0;
 			for (int j = z + 1; j < n; j++) {
-				sum += m[z][j] * x[j];
+				sum += this.m[z][j] * x[j];
 			}
-			x[z] = (agregada_aux[z]-sum)/m[z][z];
+			x[z] = (agregada_aux[z]-sum)/this.m[z][z];
 		}
 
 		//exibe os resultados
@@ -225,7 +215,6 @@ class Matriz {
 		}
 
 		//atribui as arranjos nas Matriz
-		this.m = m;
 		for(i=0; i<n; i++){
 			agregada.m[i][0] = agregada_aux[i];
 		}
@@ -267,9 +256,19 @@ class Matriz {
 		return somatorio;
 	}
 
+	public void triangularSuperior(){
+
+	}
 
 	public void formaEscalonadaReduzida(Matriz agregada){
-
+		double res = this.determinante(this); // a determinante ta zoando a matriz...
+		if(res==0.0){
+			System.out.println("matriz singular");
+			return;
+		} else {
+			//this.formaEscalonada(agregada); fazer a triangular superior https://www.sanfoundry.com/java-program-find-inverse-matrix/
+			this.imprime();
+		}
 	}
 }
 
@@ -295,12 +294,12 @@ public class EP1 {
 				}
 			}
 
+			Matriz agregada = new Matriz(n, 1);
 
 			double resultado = m1.formaEscalonada(agregada); //TODO ARRUMA ESSA PORRA
 		}
 		else if("inverte".equals(operacao)){
 			Matriz m = new Matriz(n, n);
-			Matriz agregada = new Matriz(n, 1);
 
 			for(int i = 0; i < n; i++){
 				for(int j = 0; j < n; j++){
@@ -308,8 +307,9 @@ public class EP1 {
 					m.set(i, j, nTemp);
 				}
 			}
+			Matriz agregada = new Matriz(n, 1);
 
-			m.imprime();
+			m.formaEscalonadaReduzida(agregada);
 		}
 		else if("determinante".equals(operacao)){
 			Matriz m = new Matriz(n, n);

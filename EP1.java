@@ -166,106 +166,101 @@ class Matriz {
 	// que a matriz que invoca este metodo eh uma matriz quadrada.
 
 	public double formaEscalonada(Matriz agregada){
-		//TODO FAZER VALIDACOES DESSA PARTE
+		//m e a matriz e agregada_aux e o vetor de resultados de m
 		double[][] m = this.m;
-		double[] agregada_aux = new double[this.lin];;
+		double[] agregada_aux = new double[this.lin];
 
 		int n = agregada_aux.length;
-
 		for(int i=0; i<n; i++){
 			agregada_aux[i] = m[i][n];
 		}
 
-
-		for(int i=0; i<n; i++){
+		int i=0;
+		while(i<n){
+			//pivotando
 			int maximo = i;
-
 			for(int j=i+1; j<n; j++){
 				if(m[j][i] > m[maximo][i]){
 					maximo = j;
 				}
 			}
 
+			//fazendo substituicoes
 			double[] temp = m[i];
 			m[i] = m[maximo];
 			m[maximo] = temp;
-
-			double temp2 = agregada_aux[i]; // acho que ta pegando da coluna correta
+			double temp2 = agregada_aux[i]; // ta pegando da coluna correta?
 			agregada_aux[i] = agregada_aux[maximo];
 			agregada_aux[maximo] = temp2;
 
+			//faz a eliminacao
 			for(int j=i+1; j<n ; j++){
 				double mL = m[j][i]/m[i][i];
-				agregada_aux[j] -= mL * agregada_aux[i];
+				if(agregada_aux!=null){
+					agregada_aux[j] -= mL * agregada_aux[i];
+				}
 				for(int k=0; k<n; k++){
 					m[j][k] -= mL * m[i][k];
 				}
 			}
+			i++;
 		}
 
-		//vetor de solucoes
+		//calculo das solucoes x y z...
 		double[] x = new double[n];
-		for (int i = n - 1; i >= 0; i--) {
+		for (int z = n - 1; z >= 0; z--) {
 			double sum = 0.0;
-			for (int j = i + 1; j < n; j++) {
-				sum += m[i][j] * x[j];
+			for (int j = z + 1; j < n; j++) {
+				sum += m[z][j] * x[j];
 			}
-			x[i] = (agregada_aux[i] - sum) / m[i][i];
+			x[z] = (agregada_aux[z]-sum)/m[z][z];
 		}
 
-		for(int i=0; i<n; i++){
+		//exibe os resultados
+		for(i=0; i<n; i++){
 			System.out.println(x[i]);
 		}
 
+		//atribui as arranjos nas Matriz
 		this.m = m;
-
-		for(int i=0; i<n; i++){
+		for(i=0; i<n; i++){
 			agregada.m[i][n] = agregada_aux[i];
 		}
-
-
-		double resultado = determinante(this);
-
-		return resultado;
+		return determinante(this);
 	}
 
 
 	public double determinante(Matriz ma){
 		Matriz aux_m = ma;
-		double[][] matrix = aux_m.m;
-		int order = matrix.length;
+		double[][] matriz_entrada = aux_m.m;
+		int order = matriz_entrada.length;
 		double [][] m = new double[order-1][order-1];
-		double sum = 0;
+		double somatorio = 0;
 		int i,j,k;
 
 		if(order==1){
-			sum=matrix[0][0];
-		}
-
-		else{
-			//create minor matrix
-			for(int x=0; x < order; x++){
-				int y = 0;
+			somatorio=matriz_entrada[0][0];
+		}else{
+			for(int z=0; z<order; z++){
+				int s = 0;
 				k=0;
-				for(i=1; i < order; i++){
-					for (j=0; j <order; j++){
-						if (j == x)
-						{
-							continue;
-						}
-						m[y][k]= matrix[i][j];
-						k++;
-						if(k == order-1){
-							y++;
-							k=0;
+				for(i=1; i<order; i++){
+					for(j=0; j<order; j++){
+						if(j!=z) {
+							m[s][k] = matriz_entrada[i][j];
+							k++;
+							if(k==order-1) {
+								s++;
+								k = 0;
+							}
 						}
 					}
 				}
 				aux_m.m = m;
-				sum = sum + matrix[0][x] * Math.pow((-1),x) * determinante(aux_m);
+				somatorio = somatorio + matriz_entrada[0][z] * Math.pow((-1), z) * determinante(aux_m);
 			}
 		}
-		return sum;
+		return somatorio;
 	}
 
 

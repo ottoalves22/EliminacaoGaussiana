@@ -48,7 +48,7 @@ class Matriz {
 		for(int i = 0; i < lin; i++){
 
 			for(int j = 0; j < col; j++){
-	
+				System.out.print(i +" - "+ j);
 				System.out.printf("%7.2f ", m[i][j]);
 			}
 
@@ -250,6 +250,8 @@ class Matriz {
 					}
 				}
 				aux_m.m = m;
+				aux_m.lin = order-1;
+				aux_m.col = order-1;
 				somatorio = somatorio + matriz_entrada[0][z] * Math.pow((-1), z) * determinante(aux_m);
 			}
 		}
@@ -266,8 +268,9 @@ class Matriz {
 			System.out.println("matriz singular");
 			return;
 		} else {
-			//this.formaEscalonada(agregada); fazer a triangular superior https://www.sanfoundry.com/java-program-find-inverse-matrix/
-			this.imprime();
+			//agregada.lin = this.lin;
+			//this.formaEscalonada(agregada); //fazer a triangular superior https://www.sanfoundry.com/java-program-find-inverse-matrix/
+			this.imprime(agregada);
 		}
 	}
 }

@@ -1,3 +1,5 @@
+/* OTTO ALVES - 10843361 */
+
 import java.util.*;
 
 // classe que representa uma matriz de valores do tipo double.

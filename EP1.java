@@ -48,7 +48,6 @@ class Matriz {
 		for(int i = 0; i < lin; i++){
 
 			for(int j = 0; j < col; j++){
-				System.out.print(i +" - "+ j);
 				System.out.printf("%7.2f ", m[i][j]);
 			}
 
@@ -263,14 +262,92 @@ class Matriz {
 	}
 
 	public void formaEscalonadaReduzida(Matriz agregada){
-		double res = this.determinante(this); // a determinante ta zoando a matriz...
+		Matriz aux = new Matriz(this.lin, this.col);
+
+		for(int i=0; i<this.m.length; i++){
+			for(int j=0; j<this.m.length; j++) {
+				aux.set(i, j, this.get(i, j));
+			}
+		}
+
+		double res = this.determinante(aux); // a determinante ta zoando a matriz...
 		if(res==0.0){
 			System.out.println("matriz singular");
 			return;
 		} else {
-			//agregada.lin = this.lin;
-			//this.formaEscalonada(agregada); //fazer a triangular superior https://www.sanfoundry.com/java-program-find-inverse-matrix/
-			this.imprime(agregada);
+
+			int n = this.m.length;
+			double x[][] = new double[n][n];
+			double b[][] = new double[n][n];
+			for(int i=0; i<n; ++i){
+				b[i][i] = 1;
+			}
+
+			//GAUSS (IGUAL AO DO METODO DE CIMA) TRIANGULAR INFERIOR
+			double[] agregada_aux = new double[this.lin];
+
+
+			int i=0;
+			while(i<n){
+				//pivotando
+				int maximo = this.encontraLinhaPivo(i)[0];
+				this.trocaLinha(i, maximo);
+				//troca de linha no vetor resposta
+
+				//faz a eliminacao
+				for(int j=i+1; j<n ; j++){
+					double mL = this.m[j][i]/this.m[i][i];
+					for(int k=0; k<n; k++){
+						this.m[j][k] -= mL * this.m[i][k];
+					}
+				}
+				i++;
+			}
+
+			//hora de fazer a triangular infeior
+			i=0;
+			while(i<n){
+				//pivotando
+				int maximo = this.encontraLinhaPivo(i)[0];
+				this.trocaLinha(i, maximo);
+				//troca de linha no vetor resposta
+
+				//faz a eliminacao
+				for(int j=i+1; j<n ; j++){
+					double mL = this.m[j][i]/this.m[i][i];
+					this.m[i][j] = mL;
+					for(int k=i+1; k<n; k++){
+						this.m[j][k] -= mL * this.m[i][k];
+					}
+				}
+				i++;
+			}
+			//matriz triangulada certinho
+
+			for(int v=0; v<n-1; ++v){
+				for(int j=v+1; j<n; ++j){
+					for(int k=0; k<n; ++k){
+						b[j][k] -= this.m[j][v]*b[v][k];
+					}
+				}
+			}
+
+			for (int z=0; z<n; ++z)
+			{
+				x[n-1][z] = b[n-1][z]/this.m[n-1][n-1];
+				for (int j=n-2; j>=0; --j)
+				{
+					x[j][z] = b[j][z];
+					for (int k=j+1; k<n; ++k)
+					{
+						x[j][z] -= this.m[j][k]*x[k][z];
+					}
+					x[j][z] /= this.m[j][j];
+				}
+			}
+
+			this.m = x;
+			this.imprime();
 		}
 	}
 }
